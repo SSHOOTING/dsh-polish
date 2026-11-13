@@ -1,0 +1,11 @@
+# Bundle patch for dsh-polish.
+- insert:
+    - id: dsh-polish
+      name: dsh-polish
+      config:
+        # Leave provider/model empty to follow DSH's current default model.
+        provider: ''
+        model: ''
+        timeoutMs: 90000
+        # Optional override. When empty, prompts/polish-system.md is used.
+        prompt: ''
