@@ -44,7 +44,15 @@ class PolishModelError extends Error {
 }
 
 function retryable(error) {
-  return ['EMPTY_RESPONSE', 'RATE_LIMIT', 'SERVER', 'TIMEOUT', 'TRANSPORT', 'TRUNCATED'].includes(error.code)
+  return [
+    'EMPTY_RESPONSE',
+    'INVALID_OUTPUT',
+    'RATE_LIMIT',
+    'SERVER',
+    'TIMEOUT',
+    'TRANSPORT',
+    'TRUNCATED',
+  ].includes(error.code)
 }
 
 function wait(ms) {
@@ -112,7 +120,7 @@ async function resolveReasoningEffort(ctx, route, config) {
 }
 
 function maxTokensFor(text) {
-  return Math.max(4096, Math.min(16384, Math.ceil(text.length * 2) + 2000))
+  return Math.max(8192, Math.min(32768, Math.ceil(text.length * 2) + 3000))
 }
 
 class DshPolishRemote extends TypertRemoteService {
@@ -156,7 +164,6 @@ class DshPolishRemote extends TypertRemoteService {
       route = await resolveRoute(this.ctx, this.config)
       reasoningEffort = await resolveReasoningEffort(this.ctx, route, this.config)
       const system = String(this.config.prompt || '').trim() || DEFAULT_PROMPT
-      const user = buildPolishUserMessage(text)
       let raw = ''
       let lastError = null
       let parsed = null
@@ -166,6 +173,10 @@ class DshPolishRemote extends TypertRemoteService {
 
       while (attempts <= maxRetries) {
         attempts += 1
+        const user = buildPolishUserMessage(
+          text,
+          attempts > 1 && lastError && ['INVALID_OUTPUT', 'TRUNCATED'].includes(lastError.code),
+        )
         const controller = new AbortController()
         const timeout = setTimeout(() => controller.abort(), timeoutMs)
         firstTextMs = null
@@ -274,6 +285,7 @@ class DshPolishRemote extends TypertRemoteService {
         elapsedMs,
         inputChars: text.length,
         outputChars: parsed.polished.length,
+        parseMode: parsed.parseMode,
         maxTokens: tokenLimit,
         firstTextMs,
         reasoningChars,
@@ -287,6 +299,7 @@ class DshPolishRemote extends TypertRemoteService {
         entities: parsed.entities,
         sourceEntities: parsed.sourceEntities,
         notes: parsed.notes,
+        parseMode: parsed.parseMode,
         route: `${route.provider}/${route.model}`,
         reasoningEffort: reasoningEffort === undefined ? null : String(reasoningEffort),
         attempts,

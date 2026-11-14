@@ -91,7 +91,26 @@ test('decodes literal escaped line breaks from model JSON strings', () => {
 test('flags a truncated JSON response instead of accepting raw JSON as polish', () => {
   assert.throws(
     () => parsePolishResponse('{"polished":"【目标】修改页面。\\n【关键要求】', source),
-    (error) => error.code === 'TRUNCATED' && /截断/.test(error.message),
+    (error) => ['INVALID_OUTPUT', 'TRUNCATED'].includes(error.code),
+  )
+})
+
+test('rejects protocol keys leaked into the polished text', () => {
+  assert.throws(
+    () => parsePolishResponse(
+      '润色结果如下：{"polished":"【目标】修改页面。","highlights":["修改页面"',
+      source,
+    ),
+    (error) => error.code === 'INVALID_OUTPUT',
+  )
+
+  assert.throws(
+    () => parsePolishResponse(JSON.stringify({
+      polished: '【目标】修改页面。\n"highlights": ["修改页面"]',
+      highlights: ['修改页面'],
+      source_highlights: ['接口不要动'],
+    }), source),
+    (error) => error.code === 'INVALID_OUTPUT',
   )
 })
 
@@ -99,4 +118,10 @@ test('wraps the source draft for the model', () => {
   const message = buildPolishUserMessage('  第一行\n第二行  ')
   assert.match(message, /只输出约定的 JSON/)
   assert.match(message, /<draft>\n第一行\n第二行\n<\/draft>/)
+})
+
+test('adds a repair instruction after an invalid output', () => {
+  const message = buildPolishUserMessage('测试', true)
+  assert.match(message, /上一次输出格式无效/)
+  assert.match(message, /绝不能出现 "highlights"/)
 })

@@ -70,19 +70,6 @@ window.__ModuleLoader__.load({
       .dsh-polish-trigger:disabled { cursor: default; opacity: .48; }
       .dsh-polish-trigger[data-busy="true"] .dsh-polish-spark { animation: dsh-polish-spin 1.1s linear infinite; }
       .dsh-polish-spark { width: 14px; height: 14px; flex: none; }
-      .dsh-polish-count {
-        min-width: 14px;
-        height: 14px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 4px;
-        border-radius: 999px;
-        color: var(--dsw-alias-state-business-primary);
-        background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 15%, transparent);
-        font-size: 9px;
-        font-weight: 650;
-      }
       .dsh-polish-panel {
         box-sizing: border-box;
         position: relative;
@@ -872,9 +859,7 @@ window.__ModuleLoader__.load({
           ? '先输入内容，再点击润色'
           : busy
             ? '正在重组你的表达'
-            : state.round > 0
-              ? `再次润色当前草稿（已完成 ${state.round} 次）`
-              : '把草稿整理成结构化、精简的请求',
+            : '润色当前输入',
         'aria-label': '润色当前草稿',
         onMouseDown: (event) => event.preventDefault(),
         onClick: () => {
@@ -882,8 +867,7 @@ window.__ModuleLoader__.load({
         },
       },
       h(SparkIcon),
-      h('span', null, '润色'),
-      state.round > 0 ? h('span', { className: 'dsh-polish-count' }, String(state.round)) : null)
+      h('span', null, '润色'))
     }
 
     function CombineBridge() {
@@ -975,12 +959,12 @@ window.__ModuleLoader__.load({
             style: state.status === 'done' ? { background: 'var(--dsw-alias-state-success-primary)' } : undefined,
           }),
           h('span', null, state.status === 'polishing'
-            ? `第 ${state.round + 1} 次润色中`
+            ? '润色当前'
             : state.status === 'revealing'
               ? '正在重组'
               : state.status === 'error'
                 ? '润色失败'
-                : `第 ${state.round || 1} 次润色完成`)),
+                : '润色完成')),
         h('span', { className: 'dsh-polish-head-note' }, headNote),
         h('span', { className: 'dsh-polish-head-spacer' }),
         h('button', {
@@ -1049,7 +1033,9 @@ window.__ModuleLoader__.load({
           h('span', null, `${state.source.length} 字 → ${result.polished.length} 字`),
           h('div', { className: 'dsh-polish-metrics' },
             h('span', null, `${(Number(result.elapsedMs || 0) / 1000).toFixed(1)}s`),
-            h('span', null, `${result.attempts || 1} 次尝试`),
+            result.attempts > 1
+              ? h('span', null, `连接重试 ${result.attempts - 1} 次`)
+              : null,
             h('span', null, `${result.reasoningEffort || '默认'} 思考`)))
         : null,
 
