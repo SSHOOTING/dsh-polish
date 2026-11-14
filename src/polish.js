@@ -220,6 +220,7 @@ export function buildPolishUserMessage(text, repair = false) {
     lines.push(
       '上一次输出格式无效或混入了内部字段。请重新输出一个完整、闭合的 JSON 对象；',
       'polished 字段里只能是给人阅读的最终文本，绝不能出现 "highlights"、"entities" 等键名。',
+      '如果上一次是因为长度被截断，请适当压缩重复表达，优先保证 JSON 完整闭合。',
     )
   }
   lines.push('', '<draft>', normalizeWhitespace(text), '</draft>')
