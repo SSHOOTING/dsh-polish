@@ -55,10 +55,13 @@ flowchart TB
 ### 本地开发链接
 
 ```powershell
+$env:DSH_HOME = 'E:\program\DeepSeek\.dsh'
 & 'E:\program\DeepSeek\app\node_modules\.bin\dsh.cmd' plugin --profile web add link:E:/programs/my_typeless/dsh-polish
 ```
 
-安装后需要重启 DSH Web 进程，Host 半侧才会加载。
+`DSH_HOME` 必须指向你实际启动的 DSH 数据目录。上面的启动脚本使用
+`E:\program\DeepSeek\.dsh`；如果省略这一行，插件可能被装进 `C:\Users\HUAWEI\.dsh`
+而主界面加载不到。安装后需要重启 DSH Web 进程，Host 半侧才会加载。
 
 ### 检查
 
