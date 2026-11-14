@@ -88,11 +88,23 @@ npm run check
     provider: ''
     model: ''
     timeoutMs: 90000
+    maxRetries: 2
+    retryDelayMs: 700
     prompt: |
       在这里填写你自己的润色提示词。
 ```
 
 `provider` 和 `model` 留空时，使用 DSH 当前默认模型。
+
+插件调用的是 DSH 的底层单次模型流，不会自动继承普通对话的 5 次重试，因此
+`maxRetries` 为插件自己的传输重试次数。默认对 `TRANSPORT`、`TIMEOUT`、
+`RATE_LIMIT`、`SERVER` 和空响应重试 2 次。每次成功或失败都会追加到：
+
+```text
+<DSH_HOME>/dsh-polish/diagnostics.jsonl
+```
+
+诊断记录只包含时间、模型路由、耗时、错误码、输入/输出字数和重试次数，不保存输入正文。
 
 ## 已知边界
 

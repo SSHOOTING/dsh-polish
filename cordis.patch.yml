@@ -7,5 +7,7 @@
         provider: ''
         model: ''
         timeoutMs: 90000
+        maxRetries: 2
+        retryDelayMs: 700
         # Optional override. When empty, prompts/polish-system.md is used.
         prompt: ''
