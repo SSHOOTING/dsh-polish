@@ -6,6 +6,7 @@
         # Leave provider/model empty to follow DSH's current default model.
         provider: ''
         model: ''
+        reasoningEffort: low
         timeoutMs: 90000
         maxRetries: 2
         retryDelayMs: 700

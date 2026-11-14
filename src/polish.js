@@ -2,6 +2,9 @@ const FENCE_RE = /```(?:json)?\s*([\s\S]*?)```/gi
 
 function normalizeWhitespace(value) {
   return String(value || '')
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t')
     .replace(/\r\n/g, '\n')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
@@ -116,6 +119,11 @@ function normalizeHighlights(values, container, max = 8) {
     .sort((a, b) => b.length - a.length)
 }
 
+function normalizeEntities(values, container, max = 10) {
+  return uniqueStrings(values, max)
+    .filter((value) => container.includes(value))
+}
+
 function fallbackSourceHighlights(source, polishedHighlights) {
   const direct = polishedHighlights.filter((value) => source.includes(value))
   if (direct.length > 0) return direct
@@ -141,6 +149,14 @@ export function parsePolishResponse(raw, source) {
         parsed.source_highlights || parsed.sourceHighlights,
         original,
       )
+      const entities = normalizeEntities(
+        parsed.entities || parsed.entity_terms || parsed.entityTerms,
+        polished,
+      )
+      const sourceEntities = normalizeEntities(
+        parsed.source_entities || parsed.sourceEntities,
+        original,
+      )
       return {
         polished,
         highlights: highlights.length > 0
@@ -149,9 +165,18 @@ export function parsePolishResponse(raw, source) {
         sourceHighlights: sourceHighlights.length > 0
           ? sourceHighlights
           : fallbackSourceHighlights(original, highlights),
+        entities,
+        sourceEntities,
         notes: String(parsed.notes || parsed.reason || '').trim(),
       }
     }
+  }
+
+  const trimmedRaw = String(raw || '').trim()
+  if (trimmedRaw.startsWith('{') || /"polished"\s*:/.test(trimmedRaw)) {
+    const error = new Error('模型输出被截断，没有形成完整 JSON')
+    error.code = 'TRUNCATED'
+    throw error
   }
 
   const polished = cleanPlainOutput(raw)
@@ -161,6 +186,8 @@ export function parsePolishResponse(raw, source) {
     polished,
     highlights,
     sourceHighlights: fallbackSourceHighlights(original, highlights),
+    entities: [],
+    sourceEntities: [],
     notes: '模型返回了纯文本，已按文本直接采用。',
   }
 }

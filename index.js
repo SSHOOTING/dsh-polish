@@ -44,7 +44,7 @@ class PolishModelError extends Error {
 }
 
 function retryable(error) {
-  return ['EMPTY_RESPONSE', 'RATE_LIMIT', 'SERVER', 'TIMEOUT', 'TRANSPORT'].includes(error.code)
+  return ['EMPTY_RESPONSE', 'RATE_LIMIT', 'SERVER', 'TIMEOUT', 'TRANSPORT', 'TRUNCATED'].includes(error.code)
 }
 
 function wait(ms) {
@@ -90,8 +90,29 @@ async function resolveRoute(ctx, config) {
   return route
 }
 
+async function resolveReasoningEffort(ctx, route, config) {
+  const requested = String(config.reasoningEffort || 'low').trim().toLowerCase()
+  if (!requested || requested === 'default') return undefined
+  try {
+    const info = await ctx.llm.resolveModelInfo(route.provider, route.model)
+    const efforts = info && info.reasoning && Array.isArray(info.reasoning.efforts)
+      ? info.reasoning.efforts
+      : []
+    if (efforts.some((effort) => String(effort.id) === requested)) {
+      return efforts.find((effort) => String(effort.id) === requested).id
+    }
+    for (const level of ['minimal', 'low', 'off', 'medium', 'high', 'xhigh', 'max']) {
+      const match = efforts.find((effort) => String(effort.id) === level)
+      if (match) return match.id
+    }
+  } catch {
+    // Model metadata is advisory. Preserve the provider default when absent.
+  }
+  return undefined
+}
+
 function maxTokensFor(text) {
-  return Math.max(1600, Math.min(8192, Math.ceil(text.length * 1.5) + 700))
+  return Math.max(4096, Math.min(16384, Math.ceil(text.length * 2) + 2000))
 }
 
 class DshPolishRemote extends TypertRemoteService {
@@ -127,31 +148,43 @@ class DshPolishRemote extends TypertRemoteService {
     const retryDelayMs = Math.max(100, Number.isFinite(configuredDelay) ? configuredDelay : 700)
     const sessionId = request && request.sessionId ? String(request.sessionId) : ''
     let route = null
+    let reasoningEffort = null
     let attempts = 0
+    let tokenLimit = maxTokensFor(text)
 
     try {
       route = await resolveRoute(this.ctx, this.config)
+      reasoningEffort = await resolveReasoningEffort(this.ctx, route, this.config)
       const system = String(this.config.prompt || '').trim() || DEFAULT_PROMPT
       const user = buildPolishUserMessage(text)
       let raw = ''
       let lastError = null
+      let parsed = null
+      let firstTextMs = null
+      let reasoningChars = 0
+      let finishKind = ''
 
       while (attempts <= maxRetries) {
         attempts += 1
         const controller = new AbortController()
         const timeout = setTimeout(() => controller.abort(), timeoutMs)
+        firstTextMs = null
+        reasoningChars = 0
+        finishKind = ''
+        const attemptStartedAt = Date.now()
 
         try {
           const stream = this.ctx.llm.stream({
             provider: route.provider,
             model: route.model,
+            ...(reasoningEffort === undefined ? {} : { reasoningEffort }),
             system,
             messages: [{
               role: 'user',
               content: [{ type: 'text', text: user }],
             }],
             temperature: 0.2,
-            maxTokens: maxTokensFor(text),
+            maxTokens: tokenLimit,
             signal: controller.signal,
           })
 
@@ -159,11 +192,17 @@ class DshPolishRemote extends TypertRemoteService {
           for await (const chunk of stream) {
             if (!chunk) continue
             if (chunk.type === 'text-delta') {
+              if (firstTextMs === null) firstTextMs = Date.now() - attemptStartedAt
               raw += chunk.text
+              continue
+            }
+            if (chunk.type === 'reasoning-delta') {
+              reasoningChars += String(chunk.text || '').length
               continue
             }
             if (chunk.type === 'finish') {
               const reason = chunk.reason
+              finishKind = reason && reason.kind ? reason.kind : ''
               if (reason && reason.kind === 'error') {
                 const failure = reason.failure || {}
                 throw new PolishModelError(
@@ -177,27 +216,43 @@ class DshPolishRemote extends TypertRemoteService {
                   controller.signal.aborted ? 'TIMEOUT' : 'ABORTED',
                 )
               }
+              if (reason && reason.kind === 'max-tokens') {
+                throw new PolishModelError('模型输出被截断', 'TRUNCATED')
+              }
             }
           }
           if (!raw.trim()) {
             throw new PolishModelError('模型没有返回文本', 'EMPTY_RESPONSE')
           }
+          parsed = parsePolishResponse(raw, text)
           break
         } catch (error) {
           lastError = error instanceof PolishModelError
             ? error
-            : new PolishModelError(normalizedError(error), 'MODEL')
+            : new PolishModelError(
+              normalizedError(error),
+              error && error.code ? error.code : 'MODEL',
+            )
           if (attempts > maxRetries || !retryable(lastError)) throw lastError
+          if (lastError.code === 'TRUNCATED'
+            || (lastError.code === 'EMPTY_RESPONSE' && reasoningChars > 0)) {
+            tokenLimit = Math.min(32768, tokenLimit * 2)
+          }
           const delay = retryDelayMs * (2 ** (attempts - 1))
           this.writeDiagnostic({
             status: 'retry',
             sessionId,
             route: `${route.provider}/${route.model}`,
+            reasoningEffort: reasoningEffort === undefined ? null : String(reasoningEffort),
             attempt: attempts,
             nextRetryInMs: delay,
             code: lastError.code,
             error: lastError.message,
             inputChars: text.length,
+            maxTokens: tokenLimit,
+            firstTextMs,
+            reasoningChars,
+            finishKind,
           })
           await wait(delay)
         } finally {
@@ -205,28 +260,35 @@ class DshPolishRemote extends TypertRemoteService {
         }
       }
 
-      if (lastError && !raw.trim()) {
+      if (lastError && (!raw.trim() || parsed === null)) {
         throw lastError
       }
 
-      const parsed = parsePolishResponse(raw, text)
       const elapsedMs = Date.now() - startedAt
       this.writeDiagnostic({
         status: 'ok',
         sessionId,
         route: `${route.provider}/${route.model}`,
+        reasoningEffort: reasoningEffort === undefined ? null : String(reasoningEffort),
         attempts,
         elapsedMs,
         inputChars: text.length,
         outputChars: parsed.polished.length,
+        maxTokens: tokenLimit,
+        firstTextMs,
+        reasoningChars,
+        finishKind,
       })
       return {
         ok: true,
         polished: parsed.polished,
         highlights: parsed.highlights,
         sourceHighlights: parsed.sourceHighlights,
+        entities: parsed.entities,
+        sourceEntities: parsed.sourceEntities,
         notes: parsed.notes,
         route: `${route.provider}/${route.model}`,
+        reasoningEffort: reasoningEffort === undefined ? null : String(reasoningEffort),
         attempts,
         elapsedMs,
       }

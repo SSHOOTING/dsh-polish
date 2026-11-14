@@ -211,6 +211,155 @@ window.__ModuleLoader__.load({
         font-size: 12px;
         font-weight: 600;
       }
+      .dsh-polish-elapsed {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 8px;
+        color: var(--dsw-alias-state-business-primary);
+        font-size: 10px;
+        font-variant-numeric: tabular-nums;
+      }
+      .dsh-polish-elapsed::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: dsh-polish-dot 1s ease-in-out infinite;
+      }
+      .dsh-polish-scan {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 180px;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .dsh-polish-scan-source {
+        min-width: 0;
+        max-height: 118px;
+        overflow: hidden;
+        padding: 10px 11px;
+        border: 1px solid var(--dsw-alias-border-l2);
+        border-radius: 11px;
+        background: color-mix(in srgb, var(--dsw-alias-bg-module-platform) 82%, transparent);
+        mask-image: linear-gradient(180deg, #000 72%, transparent);
+      }
+      .dsh-polish-scan-source pre {
+        margin: 0;
+        color: var(--dsw-alias-label-secondary);
+        font: inherit;
+        font-size: 12px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+      .dsh-polish-scan-side {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        justify-content: center;
+        gap: 7px;
+      }
+      .dsh-polish-step {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--dsw-alias-label-tertiary);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .dsh-polish-step::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        flex: none;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 35%, transparent);
+        box-shadow: 0 0 0 0 transparent;
+        animation: dsh-polish-step-pulse 1.2s ease-in-out var(--dsh-step-delay, 0ms) infinite;
+      }
+      .dsh-polish-flow {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+        max-height: min(46vh, 520px);
+        overflow: auto;
+        scrollbar-width: thin;
+      }
+      .dsh-polish-flow .dsh-polish-pane {
+        width: 100%;
+      }
+      .dsh-polish-transformation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 30px;
+        color: var(--dsw-alias-label-tertiary);
+        font-size: 10px;
+      }
+      .dsh-polish-transformation span {
+        padding: 4px 8px;
+        border: 1px solid var(--dsw-alias-border-l2);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--dsw-alias-bg-module-platform) 75%, transparent);
+      }
+      .dsh-polish-transform-arrow {
+        position: relative;
+        width: 26px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--dsw-alias-state-business-primary), transparent);
+      }
+      .dsh-polish-transform-arrow::after {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: 0;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--dsw-alias-state-business-primary);
+        box-shadow: 0 0 8px color-mix(in srgb, var(--dsw-alias-state-business-primary) 70%, transparent);
+        animation: dsh-polish-travel 1.1s ease-in-out infinite;
+      }
+      .dsh-polish-done-summary {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 9px;
+        padding: 9px 11px;
+        border: 1px solid color-mix(in srgb, var(--dsw-alias-state-success-primary) 18%, var(--dsw-alias-border-l2));
+        border-radius: 11px;
+        background: color-mix(in srgb, var(--dsw-alias-state-success-primary) 6%, transparent);
+        color: var(--dsw-alias-label-secondary);
+        font-size: 11px;
+        line-height: 17px;
+      }
+      .dsh-polish-done-summary strong {
+        color: var(--dsw-alias-label-primary);
+        font-weight: 600;
+      }
+      .dsh-polish-metrics {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        color: var(--dsw-alias-label-tertiary);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .dsh-polish-metrics span {
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--dsw-alias-label-tertiary) 8%, transparent);
+      }
       .dsh-polish-skeleton {
         height: 5px;
         margin-top: 7px;
@@ -280,6 +429,16 @@ window.__ModuleLoader__.load({
         background: linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--dsw-alias-state-business-primary) 25%, transparent) 55%);
         box-shadow: 0 0 0 0 color-mix(in srgb, var(--dsw-alias-state-business-primary) 0%, transparent);
         animation: dsh-polish-highlight-pulse .9s ease-in-out var(--dsh-hl-delay, 0ms) 2;
+      }
+      .dsh-polish-entity {
+        display: inline;
+        padding: 0 1px;
+        color: color-mix(in srgb, var(--dsw-alias-state-business-primary) 78%, var(--dsw-alias-label-primary));
+        text-decoration: underline dotted;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+        background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 7%, transparent);
+        border-radius: 3px;
       }
       .dsh-polish-pane:first-child .dsh-polish-hl {
         background: linear-gradient(180deg, transparent 54%, color-mix(in srgb, #ffb84d 34%, transparent) 54%);
@@ -390,6 +549,15 @@ window.__ModuleLoader__.load({
       @keyframes dsh-polish-orbit { 50% { opacity: .25; transform: scale(.62); } }
       @keyframes dsh-polish-loading { from { transform: translateX(-110%); } to { transform: translateX(250%); } }
       @keyframes dsh-polish-reveal { from { clip-path: inset(0 100% 0 0); opacity: .48; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+      @keyframes dsh-polish-step-pulse {
+        0%, 100% { opacity: .45; transform: scale(.8); }
+        45% { opacity: 1; transform: scale(1.18); box-shadow: 0 0 0 4px color-mix(in srgb, var(--dsw-alias-state-business-primary) 10%, transparent); }
+      }
+      @keyframes dsh-polish-travel {
+        0% { transform: translateX(0); opacity: 0; }
+        20% { opacity: 1; }
+        100% { transform: translateX(24px); opacity: 0; }
+      }
       @keyframes dsh-polish-highlight-source {
         0%, 100% { background-size: 100% 100%; box-shadow: 0 0 0 0 transparent; }
         45% { background-size: 100% 100%; box-shadow: 0 0 0 4px color-mix(in srgb, #ffb84d 13%, transparent); }
@@ -406,6 +574,9 @@ window.__ModuleLoader__.load({
       }
       @media (max-width: 700px) {
         .dsh-polish-compare { grid-template-columns: minmax(0, 1fr); }
+        .dsh-polish-scan { grid-template-columns: minmax(0, 1fr); }
+        .dsh-polish-scan-side { flex-direction: row; flex-wrap: wrap; }
+        .dsh-polish-metrics { margin-left: 0; width: 100%; }
         .dsh-polish-bridge { min-height: 34px; }
         .dsh-polish-bridge::before { width: 70%; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--dsw-alias-state-business-primary) 48%, transparent), transparent); }
         .dsh-polish-particle { animation-name: dsh-polish-merge-mobile; }
@@ -424,6 +595,8 @@ window.__ModuleLoader__.load({
         .dsh-polish-orb i,
         .dsh-polish-skeleton::after,
         .dsh-polish-hl,
+        .dsh-polish-step::before,
+        .dsh-polish-transform-arrow::after,
         .dsh-polish-particle,
         .dsh-polish-output .dsh-polish-pane-text,
         .dsh-polish-trigger[data-busy="true"] .dsh-polish-spark {
@@ -447,6 +620,7 @@ window.__ModuleLoader__.load({
         result: null,
         round: 0,
         animationKey: 0,
+        startedAt: 0,
         error: '',
         dirty: false,
         applied: false,
@@ -502,7 +676,12 @@ window.__ModuleLoader__.load({
     }
 
     function draftTextForEditor(text) {
-      return String(text || '').replace(/\n{2,}/g, '\n')
+      return String(text || '')
+        .replace(/\\r\\n/g, '\n')
+        .replace(/\\n/g, '\n')
+        .replace(/\\t/g, '\t')
+        .replace(/\r\n/g, '\n')
+        .replace(/\n{2,}/g, '\n')
     }
 
     async function invokePolish(payload) {
@@ -538,6 +717,7 @@ window.__ModuleLoader__.load({
         dirty: false,
         applied: false,
         animationKey: requestKey,
+        startedAt: Date.now(),
       })
 
       try {
@@ -550,7 +730,7 @@ window.__ModuleLoader__.load({
           animationKey: requestKey + 1,
         })
 
-        await sleep(2350)
+        await sleep(1400)
         if (stateFor(sessionId).animationKey !== requestKey + 1) return
 
         const currentDraft = String(draftRef.current || '')
@@ -610,7 +790,7 @@ window.__ModuleLoader__.load({
       })
     }
 
-    function rangesFor(text, phrases) {
+    function rangesFor(text, phrases, occupied = []) {
       const ranges = []
       const sorted = [...new Set(phrases || [])]
         .filter((phrase) => typeof phrase === 'string' && phrase.length > 0)
@@ -622,7 +802,8 @@ window.__ModuleLoader__.load({
           const index = text.indexOf(phrase, from)
           if (index < 0) break
           const end = index + phrase.length
-          const overlaps = ranges.some((range) => index < range.end && end > range.start)
+          const overlaps = [...occupied, ...ranges]
+            .some((range) => index < range.end && end > range.start)
           if (!overlaps) ranges.push({ start: index, end })
           from = index + Math.max(1, phrase.length)
         }
@@ -631,9 +812,15 @@ window.__ModuleLoader__.load({
       return ranges.sort((a, b) => a.start - b.start)
     }
 
-    function HighlightedText({ text, phrases }) {
+    function HighlightedText({ text, phrases, entities }) {
       const value = String(text || '')
-      const ranges = rangesFor(value, phrases)
+      const highlightRanges = rangesFor(value, phrases)
+      const entityRanges = rangesFor(value, entities, highlightRanges)
+        .map((range) => ({ ...range, kind: 'entity' }))
+      const ranges = [
+        ...highlightRanges.map((range) => ({ ...range, kind: 'highlight' })),
+        ...entityRanges,
+      ].sort((a, b) => a.start - b.start)
       if (ranges.length === 0) return value
 
       const children = []
@@ -641,8 +828,8 @@ window.__ModuleLoader__.load({
       ranges.forEach((range, index) => {
         if (cursor < range.start) children.push(value.slice(cursor, range.start))
         children.push(h('mark', {
-          key: `hl-${index}-${range.start}`,
-          className: 'dsh-polish-hl',
+          key: `${range.kind}-${index}-${range.start}`,
+          className: range.kind === 'entity' ? 'dsh-polish-entity' : 'dsh-polish-hl',
           style: { '--dsh-hl-delay': `${index * 120}ms` },
         }, value.slice(range.start, range.end)))
         cursor = range.end
@@ -706,6 +893,38 @@ window.__ModuleLoader__.load({
         h('i', { className: 'dsh-polish-particle', style: { '--dsh-particle-delay': '560ms' } }))
     }
 
+    function Elapsed({ startedAt }) {
+      const [now, setNow] = React.useState(Date.now())
+      React.useEffect(() => {
+        if (!startedAt) return undefined
+        setNow(Date.now())
+        const timer = setInterval(() => setNow(Date.now()), 200)
+        return () => clearInterval(timer)
+      }, [startedAt])
+      if (!startedAt) return null
+      return h('span', { className: 'dsh-polish-elapsed' }, `${((now - startedAt) / 1000).toFixed(1)}s`)
+    }
+
+    function sourcePreviewPhrases(text) {
+      const value = String(text || '')
+      const phrases = []
+      const patterns = [
+        /`([^`\n]{2,32})`/g,
+        /"([^"\n]{2,32})"/g,
+        /[A-Za-z][A-Za-z0-9_.:/-]{2,32}/g,
+        /(?:接口|文件名|文件|模型|插件|页面|按钮|表单|报错|提交|验收|测试|文档|约束|要求)[^，。；！？\n]{0,18}/g,
+      ]
+      for (const pattern of patterns) {
+        for (const match of value.matchAll(pattern)) {
+          const phrase = String(match[1] || match[0] || '').trim()
+          if (phrase.length >= 2 && phrase.length <= 32) phrases.push(phrase)
+          if (phrases.length >= 8) break
+        }
+        if (phrases.length >= 8) break
+      }
+      return [...new Set(phrases)].slice(0, 6)
+    }
+
     function PolishDock({ sessionId, useInput, inputActions }) {
       const draft = useInput((state) => state.draft)
       const draftRef = React.useRef(draft)
@@ -716,9 +935,15 @@ window.__ModuleLoader__.load({
       const result = state.result
       const sourcePhrases = result && Array.isArray(result.sourceHighlights)
         ? result.sourceHighlights
+        : sourcePreviewPhrases(state.source)
+      const sourceEntities = result && Array.isArray(result.sourceEntities)
+        ? result.sourceEntities
         : []
       const polishedPhrases = result && Array.isArray(result.highlights)
         ? result.highlights
+        : []
+      const polishedEntities = result && Array.isArray(result.entities)
+        ? result.entities
         : []
 
       const close = () => publish(sessionId, { visible: false })
@@ -729,14 +954,14 @@ window.__ModuleLoader__.load({
       }
 
       const headNote = state.status === 'polishing'
-        ? '只重组表达，不替你回答'
+        ? '一次模型请求，同时完成实体识别、约束提取和结构重组'
         : state.status === 'revealing'
-          ? '高亮重点 → 重新组合 → 写回输入框'
+          ? '原稿重点 → 结构重组 → 写回输入框'
           : state.status === 'ready'
             ? '你在动画期间继续编辑了，结果没有覆盖当前内容'
             : state.status === 'error'
               ? '这次没有生成可用结果'
-              : '已写回输入框，可以继续编辑或再次润色'
+              : '润色稿已经写回输入框，面板不再重复显示全文'
 
       return h('section', {
         className: 'dsh-polish-panel',
@@ -768,29 +993,64 @@ window.__ModuleLoader__.load({
         }, '×')),
 
       state.status === 'polishing'
-        ? h('div', { className: 'dsh-polish-thinking' },
-          h('span', { className: 'dsh-polish-orb', 'aria-hidden': true }, h('i')),
-          h('div', { className: 'dsh-polish-thinking-text' },
-            h('strong', null, '正在读懂目标、约束和重点'),
-            h('span', null, '先保留原意，再压缩重复，最后整理成可发送的结构。'),
+        ? h('div', { className: 'dsh-polish-scan' },
+          h('div', { className: 'dsh-polish-scan-source' },
+            h('pre', null,
+              h(HighlightedText, {
+                text: state.source,
+                phrases: sourcePhrases,
+                entities: sourceEntities,
+              }))),
+          h('div', { className: 'dsh-polish-scan-side' },
+            h('div', { className: 'dsh-polish-thinking-text' },
+              h('strong', null,
+                '正在扫描原稿',
+                h(Elapsed, { startedAt: state.startedAt })),
+              h('span', null, '实体名词与关键约束会先亮起，随后进入重组。')),
+            h('div', { className: 'dsh-polish-step', style: { '--dsh-step-delay': '0ms' } }, '识别实体名词'),
+            h('div', { className: 'dsh-polish-step', style: { '--dsh-step-delay': '180ms' } }, '提取目标与约束'),
+            h('div', { className: 'dsh-polish-step', style: { '--dsh-step-delay': '360ms' } }, '压缩重复并重排结构'),
             h('div', { className: 'dsh-polish-skeleton', 'aria-hidden': true })))
         : null,
 
-      (state.status === 'revealing' || state.status === 'done' || state.status === 'ready') && result
-        ? h('div', { className: 'dsh-polish-compare', key: state.animationKey },
+      (state.status === 'revealing' || state.status === 'ready') && result
+        ? h('div', { className: 'dsh-polish-flow', key: state.animationKey },
           h('div', { className: 'dsh-polish-pane' },
             h('div', { className: 'dsh-polish-pane-label' },
-              h('span', null, '你的原话'),
+              h('span', null, '原稿'),
               h('span', null, `${state.source.length} 字`)),
             h('pre', { className: 'dsh-polish-pane-text' },
-              h(HighlightedText, { text: state.source, phrases: sourcePhrases }))),
-          h(CombineBridge),
+              h(HighlightedText, {
+                text: state.source,
+                phrases: sourcePhrases,
+                entities: sourceEntities,
+              }))),
+          h('div', { className: 'dsh-polish-transformation', 'aria-hidden': true },
+            h('span', null, '保留原意'),
+            h('i', { className: 'dsh-polish-transform-arrow' }),
+            h('span', null, '压缩重复'),
+            h('i', { className: 'dsh-polish-transform-arrow' }),
+            h('span', null, '重组结构')),
           h('div', { className: 'dsh-polish-pane dsh-polish-output' },
             h('div', { className: 'dsh-polish-pane-label' },
-              h('span', null, '重组后的表达'),
+              h('span', null, '润色稿'),
               h('span', null, `${result.polished.length} 字`)),
             h('pre', { className: 'dsh-polish-pane-text' },
-              h(HighlightedText, { text: result.polished, phrases: polishedPhrases }))))
+              h(HighlightedText, {
+                text: result.polished,
+                phrases: polishedPhrases,
+                entities: polishedEntities,
+              }))))
+        : null,
+
+      state.status === 'done' && result
+        ? h('div', { className: 'dsh-polish-done-summary' },
+          h('strong', null, state.applied ? '已写回输入框' : '结果已生成'),
+          h('span', null, `${state.source.length} 字 → ${result.polished.length} 字`),
+          h('div', { className: 'dsh-polish-metrics' },
+            h('span', null, `${(Number(result.elapsedMs || 0) / 1000).toFixed(1)}s`),
+            h('span', null, `${result.attempts || 1} 次尝试`),
+            h('span', null, `${result.reasoningEffort || '默认'} 思考`)))
         : null,
 
       state.status === 'error'
@@ -799,7 +1059,10 @@ window.__ModuleLoader__.load({
 
       h('footer', { className: 'dsh-polish-footer' },
         state.status === 'done'
-          ? h('span', { className: 'dsh-polish-status' }, state.applied ? '已写回输入框' : '结果已生成')
+          ? h('span', { className: 'dsh-polish-notes' },
+            result && result.notes
+              ? result.notes
+              : '可直接在输入框继续编辑；再次点击“润色”会基于当前内容继续整理。')
           : h('span', { className: 'dsh-polish-notes' },
             result && result.notes
               ? result.notes
