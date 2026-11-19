@@ -57,6 +57,13 @@ flowchart TB
 
 ## 安装
 
+### 从 npm 安装
+
+```powershell
+dsh plugin --profile web add dsh-plugin-polish@0.1.1
+```
+
+npm 包名使用 `dsh-plugin-polish`；仓库名和插件内部 ID 仍为 `dsh-polish`。
 ### 本地开发链接
 
 ```powershell
@@ -142,3 +149,4 @@ token 上限。每次成功或失败都会追加到：
 ## License
 
 MIT
+

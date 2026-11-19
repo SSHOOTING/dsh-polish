@@ -1,6 +1,6 @@
 {
-  "name": "dsh-polish",
-  "version": "0.1.0",
+  "name": "dsh-plugin-polish",
+  "version": "0.1.1",
   "description": "A DSH composer plugin that polishes long drafts into a concise, structured request before sending.",
   "type": "module",
   "main": "index.js",
@@ -21,7 +21,8 @@
     "cordis.patch.yml",
     "icon.svg",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "deepseek",
@@ -74,5 +75,16 @@
   "scripts": {
     "test": "node --test test/*.test.js",
     "check": "node --check index.js && node --check client.js && node --check remote.js && node --check src/polish.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SSHOOTING/dsh-polish.git"
+  },
+  "homepage": "https://github.com/SSHOOTING/dsh-polish#readme",
+  "bugs": {
+    "url": "https://github.com/SSHOOTING/dsh-polish/issues"
   }
 }
